@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Summary: Vehicle Repair Delay | Dr. S. Cato</title>
+<style>
+  :root{
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --plane:#f4f3ef; --surface:#ffffff; --surface-2:#faf9f6;
+    --line:rgba(11,11,11,.10); --line-2:rgba(11,11,11,.06);
+    --navy:#0d366b; --navy-2:#256abf; --brand:#2a78d6;
+    --hotels:#2a78d6; --flight:#1baf7a; --gas:#c98500; --food:#008300; --stores:#4a3aa7;
+    --good:#0ca30c; --warn:#b8860b;
+    --shadow:0 1px 2px rgba(11,11,11,.04),0 8px 24px rgba(11,11,11,.06);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--plane); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.55; font-size:16px;
+  }
+  .wrap{max-width:940px; margin:0 auto; padding:0 20px 72px}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* Hero */
+  .hero{
+    background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+    color:#fff; border-radius:0 0 22px 22px; padding:44px 34px 38px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .hero::after{content:"";position:absolute;right:-80px;top:-80px;width:280px;height:280px;
+    background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%);border-radius:50%}
+  .hero .kicker{text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:700;
+    opacity:.85;margin:0 0 10px}
+  .hero h1{margin:0 0 6px;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.01em}
+  .hero .sub{margin:0;opacity:.9;font-size:15px;max-width:60ch}
+  .hero .totalcard{margin-top:26px;display:inline-flex;flex-direction:column;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+    border-radius:14px;padding:16px 22px;backdrop-filter:blur(2px)}
+  .hero .totalcard .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.1em;opacity:.85}
+  .hero .totalcard .amt{font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .hero .totalcard .note{font-size:12.5px;opacity:.85}
+
+  /* Meta strip */
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+    background:var(--line-2);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    margin-top:26px;box-shadow:var(--shadow)}
+  .meta div{background:var(--surface);padding:13px 16px}
+  .meta dt{margin:0;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+  .meta dd{margin:3px 0 0;font-size:14.5px;font-weight:600}
+  .meta dd.vin{font-size:12.5px;letter-spacing:-.01em;word-break:break-all}
+
+  section{margin-top:34px}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0 0 4px;display:flex;align-items:center;gap:9px}
+  h2 .bar{width:4px;height:20px;border-radius:3px;background:var(--brand)}
+  .lead{color:var(--ink-2);margin:0 0 16px;font-size:14.5px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);padding:22px 24px}
+
+  /* Rationale */
+  .rationale p{margin:0 0 12px;color:var(--ink-2);font-size:14.7px}
+  .rationale p:last-child{margin-bottom:0}
+  .rationale strong{color:var(--ink)}
+  .points{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:10px}
+  .points li{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;color:var(--ink-2)}
+  .points li b{color:var(--ink);font-weight:700}
+  .points .ic{flex:0 0 22px;height:22px;border-radius:50%;background:#eaf2fd;color:var(--brand);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin-top:1px}
+
+  /* Stat tiles */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:14px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 15px;
+    box-shadow:var(--shadow);position:relative}
+  .tile::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 3px 3px 0;background:var(--c)}
+  .tile .t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink-2);
+    text-transform:uppercase;letter-spacing:.05em}
+  .tile .dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:0 0 auto}
+  .tile .v{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:8px}
+  .tile .m{font-size:12.5px;color:var(--muted);margin-top:2px}
+
+  /* Proportion bar */
+  .propwrap{margin-top:18px}
+  .propbar{display:flex;height:26px;border-radius:8px;overflow:hidden;gap:2px;background:var(--surface)}
+  .propbar span{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11.5px;
+    font-weight:700;min-width:0}
+  .caption{font-size:12.5px;color:var(--muted);margin-top:9px}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  .tblcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+  .tblhead{display:flex;align-items:center;justify-content:space-between;
+    padding:13px 18px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+  .tblhead .l{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px}
+  .tblhead .l .dot{width:11px;height:11px;border-radius:50%;background:var(--c)}
+  .tblhead .r{font-size:12px;color:var(--muted);font-weight:600}
+  th,td{padding:9px 18px;text-align:left}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+  td.amt,th.amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tbody tr:nth-child(even){background:var(--surface-2)}
+  td.date{color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+  tfoot td{border-top:1px solid var(--line);font-weight:800;background:#fff}
+  tfoot td.amt{font-size:15px}
+
+  /* Grand total band */
+  .grand{margin-top:26px;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;
+    border-radius:16px;padding:22px 26px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;box-shadow:var(--shadow)}
+  .grand .lbl{font-size:13px;text-transform:uppercase;letter-spacing:.1em;opacity:.88;font-weight:700}
+  .grand .big{font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .grand .side{font-size:13px;opacity:.9;text-align:right;max-width:34ch}
+
+  /* Notes */
+  .notes{margin-top:22px}
+  .notes ul{margin:8px 0 0;padding-left:0;list-style:none;display:grid;gap:9px}
+  .notes li{display:flex;gap:10px;font-size:13.5px;color:var(--ink-2)}
+  .notes li .tag{flex:0 0 auto;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    padding:2px 8px;border-radius:20px;height:fit-content;margin-top:1px}
+  .tag.ok{background:#e4f5e4;color:#0a7d0a}
+  .tag.hold{background:#fbf0d8;color:#8a6300}
+  .tag.info{background:#e9eefb;color:#2a55c0}
+
+  footer{margin-top:30px;text-align:center;color:var(--muted);font-size:12.5px;line-height:1.7}
+
+  .toolbar{max-width:940px;margin:18px auto 0;padding:0 20px;text-align:right}
+  .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;
+    font-size:13.5px;font-weight:700;padding:9px 16px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow)}
+  .btn:hover{background:var(--surface-2)}
+
+  @media (max-width:560px){
+    .hero{padding:34px 22px 30px} .hero h1{font-size:24px} .wrap{padding:0 14px 56px}
+    th,td{padding:8px 12px} .hero .totalcard .amt{font-size:34px}
+  }
+  @media print{
+    body{background:#fff} .toolbar{display:none}
+    .hero,.grand{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .card,.tblcard,.tile,.meta{box-shadow:none}
+    section{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar"><button class="btn" onclick="window.print()">Print / Save as PDF</button></div>
+
+<header class="hero">
+  <p class="kicker">Out-of-Pocket Expense Summary</p>
+  <h1>Vehicle Repair Delay: Family Stranded in Florida</h1>
+  <p class="sub">Costs incurred while my 2026 Hyundai Tucson Plug-In Hybrid was held at Universal Hyundai, Orlando, far beyond the repair time I was promised.</p>
+  <div class="totalcard">
+    <span class="lbl">Total Documented Expenses</span>
+    <span class="amt tnum">$3,057.28</span>
+    <span class="note">Every line backed by a receipt or card record</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <dl class="meta">
+    <div><dt>Claimant</dt><dd>Dr. S. Cato</dd></div>
+    <div><dt>Home</dt><dd>New York</dd></div>
+    <div><dt>Vehicle</dt><dd>2026 Hyundai Tucson PHEV</dd></div>
+    <div><dt>VIN</dt><dd class="tnum vin">On file (redacted)</dd></div>
+    <div><dt>Dealership</dt><dd>Universal Hyundai, Orlando FL</dd></div>
+    <div><dt>In service since</dt><dd>July 7, 2026</dd></div>
+    <div><dt>Period covered</dt><dd>Jul 10 – Jul 23, 2026</dd></div>
+    <div><dt>Prepared</dt><dd>July 31, 2026</dd></div>
+  </dl>
+
+  <section class="rationale">
+    <h2><span class="bar"></span>What this claim covers</h2>
+    <div class="card">
+      <p>My family and I were passing through Florida for a short stay when the air conditioning failed. The vehicle went to Universal Hyundai on <strong>July 7</strong> for what was described as a few days of work. It was not returned on time. Over the next two-plus weeks I was told on several occasions that the car was ready or being worked on when it was not, which left us stranded out of state with a minor child and forced the costs below.</p>
+      <p>Throughout, I did everything I reasonably could to <strong>keep these costs down</strong>, not run them up:</p>
+      <ul class="points">
+        <li><span class="ic">⛽</span><span><b>Fuel driving back and forth to the dealership.</b> Each time they told me to come in, I drove to the shop in person, often after calls and texts went unanswered. Much of the fuel below is those repeated trips, plus the drive home once it was clear the car would not be ready.</span></li>
+        <li><span class="ic">🏨</span><span><b>Moved to cheaper lodging.</b> As the stay dragged on, I relocated to less expensive hotels to lower the nightly cost rather than stay put and pay more.</span></li>
+        <li><span class="ic">🛒</span><span><b>Bought groceries to eat in.</b> I shopped for food and supplies so we could prepare meals and eat out less, cutting restaurant spending during a stay that was never supposed to happen.</span></li>
+        <li><span class="ic">🚗</span><span><b>Drove the family home.</b> When the car still was not fixed, I drove us back to New York instead of continuing to pay to wait in Florida.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="bar"></span>Summary by category</h2>
+    <p class="lead">Five categories, forty documented transactions, one total.</p>
+    <div class="tiles">
+      <div class="tile" style="--c:var(--hotels)"><div class="t"><span class="dot"></span>Hotels</div><div class="v tnum">$1,700.46</div><div class="m">6 stays · 56% of total</div></div>
+      <div class="tile" style="--c:var(--stores)"><div class="t"><span class="dot"></span>Stores &amp; Groceries</div><div class="v tnum">$633.55</div><div class="m">11 trips · 21% of total</div></div>
+      <div class="tile" style="--c:var(--food)"><div class="t"><span class="dot"></span>Restaurants</div><div class="v tnum">$294.14</div><div class="m">11 meals · 10% of total</div></div>
+      <div class="tile" style="--c:var(--flight)"><div class="t"><span class="dot"></span>Flight</div><div class="v tnum">$221.40</div><div class="m">1 ticket · 7% of total</div></div>
+      <div class="tile" style="--c:var(--gas)"><div class="t"><span class="dot"></span>Gas</div><div class="v tnum">$207.73</div><div class="m">7 fill-ups · 7% of total</div></div>
+    </div>
+
+    <div class="propwrap">
+      <div class="propbar" role="img" aria-label="Category share of total: Hotels 56%, Stores 21%, Restaurants 10%, Flight 7%, Gas 7%">
+        <span style="width:55.6%;background:var(--hotels)">Hotels 56%</span>
+        <span style="width:20.7%;background:var(--stores)">Stores 21%</span>
+        <span style="width:9.6%;background:var(--food)">10%</span>
+        <span style="width:7.2%;background:var(--flight)">7%</span>
+        <span style="width:6.8%;background:var(--gas)">7%</span>
+      </div>
+      <p class="caption">Share of the $3,057.28 total by category.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="bar"></span>Itemized expenses</h2>
+
+    <div class="tblcard">
+      <div class="tblhead" style="--c:var(--hotels)"><span class="l"><span class="dot"></span>Hotels</span><span class="r">6 stays</span></div>
+      <table>
+        <thead><tr><th style="width:110px">Dates</th><th>Hotel</th><th class="amt">Amount</th></tr></thead>
+        <tbody>
+          <tr><td class="date">Jul 10–14</td><td>Home2 Suites by Hilton, Palm Bay FL</td><td class="amt">$388.08</td></tr>
+          <tr><td class="date">Jul 14–17</td><td>SpringHill Suites, West Melbourne FL (Rm 115)</td><td class="amt">$435.68</td></tr>
+          <tr><td class="date">Jul 17–20</td><td>SpringHill Suites, West Melbourne FL (Rm 116)</td><td class="amt">$423.36</td></tr>
+          <tr><td class="date">Jul 20–21</td><td>Courtyard by Marriott, Orlando FL</td><td class="amt">$162.74</td></tr>
+          <tr><td class="date">Jul 21–22</td><td>Fairfield by Marriott, Orlando at Millenia FL</td><td class="amt">$147.74</td></tr>
+          <tr><td class="date">Jul 22–23</td><td>SpringHill Suites, Lumberton NC (drive home)</td><td class="amt">$142.86</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Hotels subtotal</td><td class="amt">$1,700.46</td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="tblcard">
+      <div class="tblhead" style="--c:var(--stores)"><span class="l"><span class="dot"></span>Stores &amp; Groceries</span><span class="r">11 trips</span></div>
+      <table>
+        <thead><tr><th style="width:110px">Date</th><th>Vendor</th><th class="amt">Amount</th></tr></thead>
+        <tbody>
+          <tr><td class="date">Jul 13</td><td>BJ's Wholesale, Palm Bay FL</td><td class="amt">$310.83</td></tr>
+          <tr><td class="date">Jul 13</td><td>Publix, West Melbourne FL</td><td class="amt">$11.76</td></tr>
+          <tr><td class="date">Jul 14</td><td>Publix, West Melbourne FL</td><td class="amt">$20.48</td></tr>
+          <tr><td class="date">Jul 14</td><td>Walmart, West Melbourne FL</td><td class="amt">$53.38</td></tr>
+          <tr><td class="date">Jul 16</td><td>Publix, West Melbourne FL</td><td class="amt">$29.73</td></tr>
+          <tr><td class="date">Jul 16</td><td>Sprouts, West Melbourne FL</td><td class="amt">$1.99</td></tr>
+          <tr><td class="date">Jul 17</td><td>Walmart, West Melbourne FL</td><td class="amt">$41.25</td></tr>
+          <tr><td class="date">Jul 17</td><td>Walmart, West Melbourne FL</td><td class="amt">$29.20</td></tr>
+          <tr><td class="date">Jul 19</td><td>Aguila Supermarket, Palm Bay FL</td><td class="amt">$61.13</td></tr>
+          <tr><td class="date">Jul 20</td><td>Ollie's Bargain Outlet</td><td class="amt">$16.39</td></tr>
+          <tr><td class="date">Jul 21</td><td>Walmart, Orlando FL</td><td class="amt">$57.41</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Stores &amp; groceries subtotal</td><td class="amt">$633.55</td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="tblcard">
+      <div class="tblhead" style="--c:var(--food)"><span class="l"><span class="dot"></span>Restaurants</span><span class="r">11 meals</span></div>
+      <table>
+        <thead><tr><th style="width:110px">Date</th><th>Vendor</th><th class="amt">Amount</th></tr></thead>
+        <tbody>
+          <tr><td class="date">Jul 10</td><td>Sukihanna Sushi, Orlando FL</td><td class="amt">$16.93</td></tr>
+          <tr><td class="date">Jul 16</td><td>Charleys Cheesesteaks</td><td class="amt">$17.53</td></tr>
+          <tr><td class="date">Jul 16</td><td>Subway, Palm Bay FL</td><td class="amt">$21.49</td></tr>
+          <tr><td class="date">Jul 16</td><td>Burger King, West Melbourne FL</td><td class="amt">$9.62</td></tr>
+          <tr><td class="date">Jul 17</td><td>Cheddar's, West Melbourne FL</td><td class="amt">$35.61</td></tr>
+          <tr><td class="date">Jul 18</td><td>Cheddar's, West Melbourne FL</td><td class="amt">$29.94</td></tr>
+          <tr><td class="date">Jul 21</td><td>Bahama Breeze, Orlando FL</td><td class="amt">$55.87</td></tr>
+          <tr><td class="date">Jul 22</td><td>Subway, Orlando FL</td><td class="amt">$21.71</td></tr>
+          <tr><td class="date">Jul 22</td><td>McDonald's, Walterboro SC</td><td class="amt">$28.01</td></tr>
+          <tr><td class="date">Jul 23</td><td>Denny's</td><td class="amt">$27.67</td></tr>
+          <tr><td class="date">Jul 23</td><td>Subway, Cherry Hill NJ</td><td class="amt">$29.76</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Restaurants subtotal</td><td class="amt">$294.14</td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="tblcard">
+      <div class="tblhead" style="--c:var(--flight)"><span class="l"><span class="dot"></span>Flight</span><span class="r">1 ticket</span></div>
+      <table>
+        <thead><tr><th style="width:110px">Date</th><th>Detail</th><th class="amt">Amount</th></tr></thead>
+        <tbody>
+          <tr><td class="date">Jul 12</td><td>JetBlue, Orlando (MCO) to New York (LGA), return flight for passenger</td><td class="amt">$221.40</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Flight subtotal</td><td class="amt">$221.40</td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="tblcard">
+      <div class="tblhead" style="--c:var(--gas)"><span class="l"><span class="dot"></span>Gas</span><span class="r">7 fill-ups</span></div>
+      <table>
+        <thead><tr><th style="width:110px">Date</th><th>Station</th><th class="amt">Amount</th></tr></thead>
+        <tbody>
+          <tr><td class="date">Jul 12</td><td>RaceTrac</td><td class="amt">$15.33</td></tr>
+          <tr><td class="date">Jul 13</td><td>BJ's Wholesale Fuel</td><td class="amt">$33.19</td></tr>
+          <tr><td class="date">Jul 20</td><td>BP, St. Cloud FL</td><td class="amt">$39.58</td></tr>
+          <tr><td class="date">Jul 22</td><td>BP</td><td class="amt">$34.44</td></tr>
+          <tr><td class="date">Jul 23</td><td>Marathon</td><td class="amt">$23.53</td></tr>
+          <tr><td class="date">Jul 23</td><td>7-Eleven</td><td class="amt">$30.00</td></tr>
+          <tr><td class="date">Jul 23</td><td>Fuel 1, Cherry Hill NJ</td><td class="amt">$31.66</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Gas subtotal</td><td class="amt">$207.73</td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="grand">
+      <div>
+        <div class="lbl">Grand total</div>
+        <div class="big tnum">$3,057.28</div>
+      </div>
+      <div class="side">Core stranding costs (hotels, flight, gas, restaurants) are $2,423.73; stores and groceries add $633.55, largely bought to reduce dining costs.</div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h2><span class="bar"></span>Notes on the figures</h2>
+    <div class="card">
+      <ul>
+        <li><span class="tag ok">Verified</span><span>Every amount is taken from an actual receipt or credit card record. Supporting documentation is available on request.</span></li>
+        <li><span class="tag ok">Confirmed</span><span>The Fairfield Orlando charge ($147.74) is backed by the final paid hotel folio, room 412, balance $0.00.</span></li>
+        <li><span class="tag info">No double-counting</span><span>The July 20 BP fuel charge appears on both a paper receipt and the card statement; it is counted only once.</span></li>
+        <li><span class="tag hold">Pending</span><span>One to-go breakfast (July 15) is not included because the total was cut off on the receipt. The amount will be added from the card statement.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Prepared for Dr. S. Cato · 2026 Hyundai Tucson Plug-In Hybrid · VIN on file<br>
+    Universal Hyundai, Orlando FL · Vehicle in service since July 7, 2026 · Supporting receipts retained.
+  </footer>
+
+</div>
+</body>
+</html>
