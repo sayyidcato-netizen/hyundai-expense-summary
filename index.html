@@ -10,7 +10,7 @@
     --plane:#f4f3ef; --surface:#ffffff; --surface-2:#faf9f6;
     --line:rgba(11,11,11,.10); --line-2:rgba(11,11,11,.06);
     --navy:#0d366b; --navy-2:#256abf; --brand:#2a78d6;
-    --hotels:#2a78d6; --flight:#1baf7a; --gas:#c98500; --food:#008300; --stores:#4a3aa7;
+    --hotels:#2a78d6; --flight:#1baf7a; --gas:#c98500; --food:#008300; --stores:#4a3aa7; --allc:#334155;
     --good:#0ca30c; --warn:#b8860b;
     --shadow:0 1px 2px rgba(11,11,11,.04),0 8px 24px rgba(11,11,11,.06);
   }
@@ -71,22 +71,35 @@
     display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin-top:1px}
 
   /* Stat tiles */
-  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:14px}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px}
   .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 15px;
-    box-shadow:var(--shadow);position:relative}
+    box-shadow:var(--shadow);position:relative;cursor:pointer;
+    transition:transform .1s ease,border-color .15s ease,box-shadow .15s ease}
   .tile::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 3px 3px 0;background:var(--c)}
+  .tile:hover{transform:translateY(-2px);border-color:var(--c)}
+  .tile:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+  .tile.active{box-shadow:0 0 0 2px var(--c) inset, var(--shadow)}
   .tile .t{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink-2);
     text-transform:uppercase;letter-spacing:.05em}
   .tile .dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:0 0 auto}
   .tile .v{font-size:25px;font-weight:800;letter-spacing:-.02em;margin-top:8px}
   .tile .m{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .clickhint{font-size:12.5px;color:var(--muted);margin:12px 0 0}
 
   /* Proportion bar */
   .propwrap{margin-top:18px}
   .propbar{display:flex;height:26px;border-radius:8px;overflow:hidden;gap:2px;background:var(--surface)}
   .propbar span{display:flex;align-items:center;justify-content:center;color:#fff;font-size:11.5px;
-    font-weight:700;min-width:0}
+    font-weight:700;min-width:0;cursor:pointer}
   .caption{font-size:12.5px;color:var(--muted);margin-top:9px}
+
+  /* Filter bar */
+  .filterbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+  .filterbar .showall{border:1px solid var(--line);background:var(--surface);color:var(--brand);
+    font:inherit;font-size:13px;font-weight:700;padding:7px 14px;border-radius:9px;cursor:pointer}
+  .filterbar .showall:hover{background:var(--surface-2)}
+  .filterbar .cur{font-size:13.5px;color:var(--ink-2);font-weight:600}
+  .is-hidden{display:none!important}
 
   /* Tables */
   table{width:100%;border-collapse:collapse;font-size:14px}
@@ -135,7 +148,8 @@
     th,td{padding:8px 12px} .hero .totalcard .amt{font-size:34px}
   }
   @media print{
-    body{background:#fff} .toolbar{display:none}
+    body{background:#fff} .toolbar,.filterbar,.clickhint{display:none}
+    .is-hidden{display:block!important}
     .hero,.grand{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .card,.tblcard,.tile,.meta{box-shadow:none}
     section{break-inside:avoid}
@@ -152,7 +166,7 @@
   <p class="sub">Costs incurred while my 2026 Hyundai Tucson Plug-In Hybrid was held at Universal Hyundai, Orlando, far beyond the repair time I was promised.</p>
   <div class="totalcard">
     <span class="lbl">Total Documented Expenses</span>
-    <span class="amt tnum">$3,057.28</span>
+    <span class="amt tnum">$3,091.92</span>
     <span class="note">Every line backed by a receipt or card record</span>
   </div>
 </header>
@@ -176,41 +190,47 @@
       <p>My family and I were passing through Florida for a short stay when the air conditioning failed. The vehicle went to Universal Hyundai on <strong>July 7</strong> for what was described as a few days of work. It was not returned on time. Over the next two-plus weeks I was told on several occasions that the car was ready or being worked on when it was not, which left us stranded out of state with a minor child and forced the costs below.</p>
       <p>Throughout, I did everything I reasonably could to <strong>keep these costs down</strong>, not run them up:</p>
       <ul class="points">
-        <li><span class="ic">⛽</span><span><b>Fuel driving back and forth to the dealership.</b> Each time they told me to come in, I drove to the shop in person, often after calls and texts went unanswered. Much of the fuel below is those repeated trips, plus the drive home once it was clear the car would not be ready.</span></li>
+        <li><span class="ic">⛽</span><span><b>Fuel driving back and forth to the dealership.</b> Each time they told me to come in, I drove to the shop in person, often after calls and texts went unanswered. Much of the fuel below is those repeated trips, plus the drive home.</span></li>
         <li><span class="ic">🏨</span><span><b>Moved to cheaper lodging.</b> As the stay dragged on, I relocated to less expensive hotels to lower the nightly cost rather than stay put and pay more.</span></li>
         <li><span class="ic">🛒</span><span><b>Bought groceries to eat in.</b> I shopped for food and supplies so we could prepare meals and eat out less, cutting restaurant spending during a stay that was never supposed to happen.</span></li>
-        <li><span class="ic">🚗</span><span><b>Drove the family home.</b> When the car still was not fixed, I drove us back to New York instead of continuing to pay to wait in Florida.</span></li>
+        <li><span class="ic">🚗</span><span><b>Drove home once the car was returned.</b> By the time the vehicle was finally repaired and handed back, it was too late in the day to make the full drive to New York, so with my child I had to stop and spend the night in North Carolina before continuing home the next day.</span></li>
       </ul>
     </div>
   </section>
 
   <section>
     <h2><span class="bar"></span>Summary by category</h2>
-    <p class="lead">Five categories, forty documented transactions, one total.</p>
+    <p class="lead">Five categories, forty-one documented transactions, one total.</p>
     <div class="tiles">
-      <div class="tile" style="--c:var(--hotels)"><div class="t"><span class="dot"></span>Hotels</div><div class="v tnum">$1,700.46</div><div class="m">6 stays · 56% of total</div></div>
-      <div class="tile" style="--c:var(--stores)"><div class="t"><span class="dot"></span>Stores &amp; Groceries</div><div class="v tnum">$633.55</div><div class="m">11 trips · 21% of total</div></div>
-      <div class="tile" style="--c:var(--food)"><div class="t"><span class="dot"></span>Restaurants</div><div class="v tnum">$294.14</div><div class="m">11 meals · 10% of total</div></div>
-      <div class="tile" style="--c:var(--flight)"><div class="t"><span class="dot"></span>Flight</div><div class="v tnum">$221.40</div><div class="m">1 ticket · 7% of total</div></div>
-      <div class="tile" style="--c:var(--gas)"><div class="t"><span class="dot"></span>Gas</div><div class="v tnum">$207.73</div><div class="m">7 fill-ups · 7% of total</div></div>
+      <div class="tile tile-all" style="--c:var(--allc)" data-filter="all"><div class="t"><span class="dot"></span>All Expenses</div><div class="v tnum">$3,091.92</div><div class="m">41 items · show everything</div></div>
+      <div class="tile" style="--c:var(--hotels)" data-filter="hotels"><div class="t"><span class="dot"></span>Hotels</div><div class="v tnum">$1,700.46</div><div class="m">6 stays · 55% of total</div></div>
+      <div class="tile" style="--c:var(--stores)" data-filter="stores"><div class="t"><span class="dot"></span>Stores &amp; Groceries</div><div class="v tnum">$633.55</div><div class="m">11 trips · 20% of total</div></div>
+      <div class="tile" style="--c:var(--food)" data-filter="food"><div class="t"><span class="dot"></span>Restaurants</div><div class="v tnum">$328.78</div><div class="m">12 meals · 11% of total</div></div>
+      <div class="tile" style="--c:var(--flight)" data-filter="flight"><div class="t"><span class="dot"></span>Flight</div><div class="v tnum">$221.40</div><div class="m">1 ticket · 7% of total</div></div>
+      <div class="tile" style="--c:var(--gas)" data-filter="gas"><div class="t"><span class="dot"></span>Gas</div><div class="v tnum">$207.73</div><div class="m">7 fill-ups · 7% of total</div></div>
     </div>
+    <p class="clickhint">Tip: tap any category above to filter the itemized list below. Tap "Show all" to see everything again.</p>
 
     <div class="propwrap">
-      <div class="propbar" role="img" aria-label="Category share of total: Hotels 56%, Stores 21%, Restaurants 10%, Flight 7%, Gas 7%">
-        <span style="width:55.6%;background:var(--hotels)">Hotels 56%</span>
-        <span style="width:20.7%;background:var(--stores)">Stores 21%</span>
-        <span style="width:9.6%;background:var(--food)">10%</span>
-        <span style="width:7.2%;background:var(--flight)">7%</span>
-        <span style="width:6.8%;background:var(--gas)">7%</span>
+      <div class="propbar" role="img" aria-label="Category share of total: Hotels 55%, Stores 20%, Restaurants 11%, Flight 7%, Gas 7%">
+        <span style="width:55.0%;background:var(--hotels)" data-filter="hotels">Hotels 55%</span>
+        <span style="width:20.5%;background:var(--stores)" data-filter="stores">Stores 20%</span>
+        <span style="width:10.6%;background:var(--food)" data-filter="food">11%</span>
+        <span style="width:7.2%;background:var(--flight)" data-filter="flight">7%</span>
+        <span style="width:6.7%;background:var(--gas)" data-filter="gas">7%</span>
       </div>
-      <p class="caption">Share of the $3,057.28 total by category.</p>
+      <p class="caption">Share of the $3,091.92 total by category. Tap a segment to filter.</p>
     </div>
   </section>
 
-  <section>
+  <section id="itemized">
     <h2><span class="bar"></span>Itemized expenses</h2>
+    <div class="filterbar">
+      <button class="showall" data-filter="all">Show all</button>
+      <span class="cur" id="filterLabel">Showing all expenses</span>
+    </div>
 
-    <div class="tblcard">
+    <div class="tblcard" data-cat="hotels">
       <div class="tblhead" style="--c:var(--hotels)"><span class="l"><span class="dot"></span>Hotels</span><span class="r">6 stays</span></div>
       <table>
         <thead><tr><th style="width:110px">Dates</th><th>Hotel</th><th class="amt">Amount</th></tr></thead>
@@ -226,7 +246,7 @@
       </table>
     </div>
 
-    <div class="tblcard">
+    <div class="tblcard" data-cat="stores">
       <div class="tblhead" style="--c:var(--stores)"><span class="l"><span class="dot"></span>Stores &amp; Groceries</span><span class="r">11 trips</span></div>
       <table>
         <thead><tr><th style="width:110px">Date</th><th>Vendor</th><th class="amt">Amount</th></tr></thead>
@@ -247,12 +267,13 @@
       </table>
     </div>
 
-    <div class="tblcard">
-      <div class="tblhead" style="--c:var(--food)"><span class="l"><span class="dot"></span>Restaurants</span><span class="r">11 meals</span></div>
+    <div class="tblcard" data-cat="food">
+      <div class="tblhead" style="--c:var(--food)"><span class="l"><span class="dot"></span>Restaurants</span><span class="r">12 meals</span></div>
       <table>
         <thead><tr><th style="width:110px">Date</th><th>Vendor</th><th class="amt">Amount</th></tr></thead>
         <tbody>
           <tr><td class="date">Jul 10</td><td>Sukihanna Sushi, Orlando FL</td><td class="amt">$16.93</td></tr>
+          <tr><td class="date">Jul 15</td><td>Breakfast, to-go</td><td class="amt">$34.64</td></tr>
           <tr><td class="date">Jul 16</td><td>Charleys Cheesesteaks</td><td class="amt">$17.53</td></tr>
           <tr><td class="date">Jul 16</td><td>Subway, Palm Bay FL</td><td class="amt">$21.49</td></tr>
           <tr><td class="date">Jul 16</td><td>Burger King, West Melbourne FL</td><td class="amt">$9.62</td></tr>
@@ -264,11 +285,11 @@
           <tr><td class="date">Jul 23</td><td>Denny's</td><td class="amt">$27.67</td></tr>
           <tr><td class="date">Jul 23</td><td>Subway, Cherry Hill NJ</td><td class="amt">$29.76</td></tr>
         </tbody>
-        <tfoot><tr><td colspan="2">Restaurants subtotal</td><td class="amt">$294.14</td></tr></tfoot>
+        <tfoot><tr><td colspan="2">Restaurants subtotal</td><td class="amt">$328.78</td></tr></tfoot>
       </table>
     </div>
 
-    <div class="tblcard">
+    <div class="tblcard" data-cat="flight">
       <div class="tblhead" style="--c:var(--flight)"><span class="l"><span class="dot"></span>Flight</span><span class="r">1 ticket</span></div>
       <table>
         <thead><tr><th style="width:110px">Date</th><th>Detail</th><th class="amt">Amount</th></tr></thead>
@@ -279,7 +300,7 @@
       </table>
     </div>
 
-    <div class="tblcard">
+    <div class="tblcard" data-cat="gas">
       <div class="tblhead" style="--c:var(--gas)"><span class="l"><span class="dot"></span>Gas</span><span class="r">7 fill-ups</span></div>
       <table>
         <thead><tr><th style="width:110px">Date</th><th>Station</th><th class="amt">Amount</th></tr></thead>
@@ -299,9 +320,9 @@
     <div class="grand">
       <div>
         <div class="lbl">Grand total</div>
-        <div class="big tnum">$3,057.28</div>
+        <div class="big tnum">$3,091.92</div>
       </div>
-      <div class="side">Core stranding costs (hotels, flight, gas, restaurants) are $2,423.73; stores and groceries add $633.55, largely bought to reduce dining costs.</div>
+      <div class="side">Core stranding costs (hotels, flight, gas, restaurants) are $2,458.37; stores and groceries add $633.55, largely bought to reduce dining costs.</div>
     </div>
   </section>
 
@@ -311,9 +332,7 @@
       <ul>
         <li><span class="tag ok">Verified</span><span>Every amount is taken from an actual receipt or credit card record. Supporting documentation is available on request.</span></li>
         <li><span class="tag ok">Confirmed</span><span>The Fairfield Orlando charge ($147.74) is backed by the final paid hotel folio, room 412, balance $0.00.</span></li>
-        <li><span class="tag info">No double-counting</span><span>The July 20 BP fuel charge appears on both a paper receipt and the card statement; it is counted only once.</span></li>
-        <li><span class="tag hold">Pending</span><span>One to-go breakfast (July 15) is not included because the total was cut off on the receipt. The amount will be added from the card statement.</span></li>
-      </ul>
+        <li><span class="tag info">No double-counting</span><span>The July 20 BP fuel charge appears on both a paper receipt and the card statement; it is counted only once.</span></li>      </ul>
     </div>
   </section>
 
@@ -323,5 +342,40 @@
   </footer>
 
 </div>
+
+<script>
+(function(){
+  var cards = [].slice.call(document.querySelectorAll('.tblcard'));
+  var label = document.getElementById('filterLabel');
+  var names = {all:'all expenses',hotels:'Hotels',stores:'Stores & Groceries',food:'Restaurants',flight:'Flight',gas:'Gas'};
+  function setFilter(cat){
+    for(var i=0;i<cards.length;i++){
+      var show = (cat==='all') || (cards[i].getAttribute('data-cat')===cat);
+      cards[i].classList.toggle('is-hidden', !show);
+    }
+    var tiles = document.querySelectorAll('.tile');
+    for(var j=0;j<tiles.length;j++){
+      tiles[j].classList.toggle('active', tiles[j].getAttribute('data-filter')===cat);
+    }
+    if(label){ label.textContent = (cat==='all') ? 'Showing all expenses' : ('Showing: ' + (names[cat]||cat)); }
+  }
+  var clickers = document.querySelectorAll('[data-filter]');
+  for(var k=0;k<clickers.length;k++){
+    (function(el){
+      el.setAttribute('tabindex','0');
+      el.setAttribute('role','button');
+      el.addEventListener('click', function(){
+        var cat = el.getAttribute('data-filter');
+        setFilter(cat);
+        if(cat!=='all'){ var it=document.getElementById('itemized'); if(it){ it.scrollIntoView({behavior:'smooth',block:'start'}); } }
+      });
+      el.addEventListener('keydown', function(e){
+        if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }
+      });
+    })(clickers[k]);
+  }
+  setFilter('all');
+})();
+</script>
 </body>
 </html>
